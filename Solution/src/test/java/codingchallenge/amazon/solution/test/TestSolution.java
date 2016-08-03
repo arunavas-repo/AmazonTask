@@ -1,12 +1,15 @@
 package codingchallenge.amazon.solution.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import codingchallenge.amazon.solution.Solution;
 import codingchallenge.amazon.solution.loader.DataLoader;
 import codingchallenge.amazon.solution.loader.impl.FileDataLoder;
@@ -36,9 +39,9 @@ public class TestSolution {
 		solution.solve(getClass().getResource("/instances.txt").getFile(), getClass().getResource("/FleetState.txt").getFile());
 		List<String> result = null;
 		List<String> expectedResult = new ArrayList<String>();
-		expectedResult.add("EMPTY: M1=88920; M2=0; M3=0;");
-		expectedResult.add("FULL: M1=44460; M2=44460; M3=0;");
-		expectedResult.add("MOST FILLED: M1=222300,1; M2=133380,1; M3=88920,3;");
+		expectedResult.add("EMPTY: M1=2; M2=0; M3=0;");
+		expectedResult.add("FULL: M1=1; M2=1; M3=0;");
+		expectedResult.add("MOST FILLED: M1=5,1; M2=3,1; M3=2,3;");
 		try {
 			result = new FileUtil().readFromFile(getClass().getResource("/Statistics.txt").getFile());
 		} catch (IOException e) {
