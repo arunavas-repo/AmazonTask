@@ -24,25 +24,29 @@ public class Result {
 	public int getEmptyHostsCount() {
 		return emptyHostsCount;
 	}
-	public void setEmptyHostsCount(int emptyHostsCount) {
-		this.emptyHostsCount = emptyHostsCount;
+	public synchronized void incrementEmptyHostsCountByOne() {
+		this.emptyHostsCount++;
 	}
 	public int getFilledHostsCount() {
 		return filledHostsCount;
 	}
-	public void setFilledHostsCount(int filledHostsCount) {
-		this.filledHostsCount = filledHostsCount;
+	public synchronized void incrementFilledHostsCountByOne() {
+		this.filledHostsCount++;
 	}
 	public int getMostFilledHostsCount() {
 		return mostFilledHostsCount;
 	}
-	public void setMostFilledHostsCount(int mostFilledHostsCount) {
-		this.mostFilledHostsCount = mostFilledHostsCount;
+	public synchronized void incrementMostFilledHostsCountByOne() {
+		this.mostFilledHostsCount++;
 	}
 	public long getEmptySlots() {
 		return emptySlots;
 	}
-	public void setEmptySlots(long emptySlots) {
+	/*public void setEmptySlots(final long emptySlots) {
+		this.emptySlots = emptySlots;
+	}*/
+	public synchronized void resetMostFilledHostsCount(final long emptySlots) {
+		this.mostFilledHostsCount = 1;
 		this.emptySlots = emptySlots;
 	}
 	

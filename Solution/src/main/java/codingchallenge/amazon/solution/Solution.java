@@ -35,7 +35,7 @@ public class Solution {
 		//Spawning threads - one instance per thread in the pool. if number of instances is greater than 10 then limiting the thread size to 10 in the pool
 		CountDownLatch latch = new CountDownLatch(instances.getInstances().size());
 		int POOL_SIZE = instances.getInstances().size() > 10 ? 10 : instances.getInstances().size();
-		
+		System.out.println("Creating Thread Pool Size: " + POOL_SIZE);
 		ExecutorService executorService = Executors.newFixedThreadPool(POOL_SIZE);
 		List<Future<Result>> results = new ArrayList<Future<Result>>();
 		
@@ -100,15 +100,12 @@ public class Solution {
 			
 			for (Future<Result> future : results) {
 				Result result = future.get();
-				empty.append(" " + result.getInstanceType() + "=" + (result.getEmptyHostsCount() > 0 ? result.getEmptyHostsCount() : 0) + ";");
-				filled.append(" " + result.getInstanceType() + "=" + (result.getFilledHostsCount() > 0 ? result.getFilledHostsCount() : 0) + ";");
-				if (result.getMostFilledHostsCount() > 0)
-					mostFilled.append(" " + result.getInstanceType() + "=" + result.getMostFilledHostsCount() + "," + result.getEmptySlots() + ";");
-				else
-					mostFilled.append(" " + result.getInstanceType() + "=0,0;");
+				empty.append(" " + result.getInstanceType() + "=" + result.getEmptyHostsCount() + ";");
+				filled.append(" " + result.getInstanceType() + "=" + result.getFilledHostsCount() + ";");
+				mostFilled.append(" " + result.getInstanceType() + "=" + result.getMostFilledHostsCount() + "," + result.getEmptySlots() + ";");
 			}
 			
-			System.out.println("Writing to file: " + resultFileLocation + "/Statistics.txt");
+			System.out.println("Writing to file: " + resultFileLocation);
 			new FileUtil().writeToFile(resultFileLocation, "EMPTY:" + empty.toString(), "FULL:" + filled.toString(), "MOST FILLED:" + mostFilled.toString());
 			
 		} catch (InterruptedException | ExecutionException | FileNotFoundException e) {

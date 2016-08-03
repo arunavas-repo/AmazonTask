@@ -22,7 +22,7 @@ public class Processor implements Callable<Result> {
 	@Override
 	public Result call() throws Exception {
 		System.out.println("Started Processing Instance: " + instanceType);
-		Result result = new Result();
+		final Result result = new Result();
 		result.setInstanceType(instanceType);
 		
 		hosts.stream().parallel().forEach(host -> {
@@ -36,12 +36,13 @@ public class Processor implements Callable<Result> {
 			long zeros = host.getSlots().stream().parallel().filter(x -> x == 0).count();
 			long ones = host.getSlots().stream().parallel().filter(x -> x == 1).count();
 			
-			if (zeros == host.getSlots().size()) result.setEmptyHostsCount(result.getEmptyHostsCount() + 1);
-			else if (ones == host.getSlots().size()) result.setFilledHostsCount(result.getFilledHostsCount() + 1);
-			else if (zeros == result.getEmptySlots()) result.setMostFilledHostsCount(result.getMostFilledHostsCount() + 1);
-			else if (result.getEmptySlots() == 0 || zeros < result.getEmptySlots()) {
-				result.setMostFilledHostsCount(1);
-				result.setEmptySlots(zeros);
+			if (zeros == host.getSlots().size()) result.incrementEmptyHostsCountByOne();
+			else if (ones == host.getSlots().size()) result.incrementFilledHostsCountByOne();
+			else {
+				synchronized (result) {
+					if (zeros == result.getEmptySlots()) result.incrementMostFilledHostsCountByOne();
+					else if (result.getEmptySlots() == 0 || zeros < result.getEmptySlots()) result.resetMostFilledHostsCount(zeros);
+				}
 			}
 		});
 		latch.countDown();
