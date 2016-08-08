@@ -25,7 +25,7 @@ public class Processor implements Callable<Result> {
 		final Result result = new Result();
 		result.setInstanceType(instanceType);
 		
-		hosts.stream().parallel().forEach(host -> {
+		hosts.stream().forEach(host -> {
 			/* getting the number of zeros and number of ones in the list.
 			*  If number of zero is same as the size of total slots then the host is empty.
 			*  If number of ones is same as the size of total slots then the host is full.
@@ -33,16 +33,14 @@ public class Processor implements Callable<Result> {
 			*  If number of zero is less than existing empty slots or existing empty slots count is 0 (i.e. first time entry)
 			*     then new most filled host - considering the new empty slot count as min empty slot count and mostfilled host count as 1
 			*/
-			long zeros = host.getSlots().stream().parallel().filter(x -> x == 0).count();
-			long ones = host.getSlots().stream().parallel().filter(x -> x == 1).count();
+			long zeros = host.getSlots().stream().filter(x -> x == 0).count();
+			long ones = host.getSlots().stream().filter(x -> x == 1).count();
 			
 			if (zeros == host.getSlots().size()) result.incrementEmptyHostsCountByOne();
 			else if (ones == host.getSlots().size()) result.incrementFilledHostsCountByOne();
 			else {
-				synchronized (result) {
-					if (zeros == result.getEmptySlots()) result.incrementMostFilledHostsCountByOne();
-					else if (result.getEmptySlots() == 0 || zeros < result.getEmptySlots()) result.resetMostFilledHostsCount(zeros);
-				}
+				if (zeros == result.getEmptySlots()) result.incrementMostFilledHostsCountByOne();
+				else if (result.getEmptySlots() == 0 || zeros < result.getEmptySlots()) result.resetMostFilledHostsCount(zeros);
 			}
 		});
 		latch.countDown();
